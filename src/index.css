@@ -1,0 +1,386 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'HYYaKuHeiW';
+    src: local('Noto Sans JP'), local('Hiragino Sans');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Adobe Heiti Std';
+    src: local('Hiragino Sans'), local('Yu Gothic');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply bg-gradient-to-b from-white to-light-blue text-gray-800 min-h-screen;
+    overflow-x: hidden;
+    font-family: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 #dbeafe;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #dbeafe;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #1e3a8a;
+  }
+
+  body[data-modal-open] header,
+  body[data-modal-open] > div > header {
+    display: none !important;
+  }
+
+  body[data-modal-open] footer,
+  body[data-modal-open] > div > footer {
+    display: none !important;
+  }
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(6, 199, 85, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(6, 199, 85, 0.8), 0 0 60px rgba(6, 199, 85, 0.4);
+    }
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.33%);
+    }
+  }
+
+  @keyframes robot-float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes book-read {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-2px) rotate(-1deg);
+    }
+    75% {
+      transform: translateY(-2px) rotate(1deg);
+    }
+  }
+
+  @keyframes magnifier-scan {
+    0%, 30% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+    35% {
+      opacity: 1;
+    }
+    70% {
+      transform: translate(80px, 0);
+      opacity: 1;
+    }
+    75%, 100% {
+      transform: translate(80px, 0);
+      opacity: 0;
+    }
+  }
+
+  .animate-scroll-left {
+    animation: scroll-left 30s linear infinite;
+  }
+
+  .animate-robot-float {
+    animation: robot-float 3s ease-in-out infinite;
+  }
+
+  .animate-book-read {
+    animation: book-read 4s ease-in-out infinite;
+  }
+
+  .animate-magnifier-scan {
+    animation: magnifier-scan 8s ease-in-out infinite;
+  }
+
+  @keyframes astronaut-float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-8px) rotate(-2deg);
+    }
+    75% {
+      transform: translateY(-5px) rotate(2deg);
+    }
+  }
+
+  @keyframes rocket-lift {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-6px) rotate(1deg);
+    }
+    50% {
+      transform: translateY(-12px) rotate(-1deg);
+    }
+    75% {
+      transform: translateY(-6px) rotate(1deg);
+    }
+  }
+
+  .animate-astronaut-float {
+    animation: astronaut-float 4s ease-in-out infinite;
+  }
+
+  .animate-rocket-lift {
+    animation: rocket-lift 3s ease-in-out infinite;
+  }
+
+  @keyframes brain-pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+  }
+
+  @keyframes neuron-pulse {
+    0%, 100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes core-pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 1;
+    }
+  }
+
+  @keyframes neuron-fire {
+    0%, 100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.3);
+    }
+  }
+
+  @keyframes energy-wave {
+    0% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(2);
+    }
+  }
+
+  @keyframes data-flow-up {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-170px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes data-pulse {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+
+  @keyframes arrow-bounce {
+    0%, 100% {
+      transform: translateY(0);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-5px);
+      opacity: 1;
+    }
+  }
+
+  @keyframes data-source-pulse {
+    0%, 100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes cloud-float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes particle-float {
+    0%, 100% {
+      transform: translate(0, 0);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translate(10px, -10px);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translate(-5px, -20px);
+      opacity: 1;
+    }
+    75% {
+      transform: translate(-10px, -10px);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes line-pulse {
+    0%, 100% {
+      opacity: 0.1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-brain-pulse {
+    animation: brain-pulse 3s ease-in-out infinite;
+  }
+
+  .animate-neuron-pulse {
+    animation: neuron-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-core-pulse {
+    animation: core-pulse 2.5s ease-in-out infinite;
+  }
+
+  .animate-neuron-fire {
+    animation: neuron-fire 1.5s ease-in-out infinite;
+  }
+
+  .animate-energy-wave {
+    animation: energy-wave 2s ease-out infinite;
+  }
+
+  .animate-data-flow-up {
+    animation: data-flow-up 2.4s ease-in-out infinite;
+  }
+
+  .animate-data-pulse {
+    animation: data-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-arrow-bounce {
+    animation: arrow-bounce 1.5s ease-in-out infinite;
+  }
+
+  .animate-data-source-pulse {
+    animation: data-source-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-cloud-float {
+    animation: cloud-float 3s ease-in-out infinite;
+  }
+
+  .animate-particle-float {
+    animation: particle-float 5s ease-in-out infinite;
+  }
+
+  .animate-line-pulse {
+    animation: line-pulse 3s ease-in-out infinite;
+  }
+}
