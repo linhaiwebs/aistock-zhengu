@@ -18,6 +18,7 @@ export default function ModernStockInput({ value, onChange, onStockSelect, searc
   const [isSearching, setIsSearching] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isSelectingRef = useRef(false); // Flag to prevent search after selection
 
   const ITEMS_PER_PAGE = 5;
 
@@ -42,6 +43,12 @@ export default function ModernStockInput({ value, onChange, onStockSelect, searc
   });
 
   useEffect(() => {
+    // Skip search if we're in the middle of selecting a result
+    if (isSelectingRef.current) {
+      isSelectingRef.current = false;
+      return;
+    }
+
     if (value.trim().length > 0) {
       performSearch.current(value);
     } else {
@@ -77,7 +84,12 @@ export default function ModernStockInput({ value, onChange, onStockSelect, searc
 
   const handleStockClick = (stock: SearchResult) => {
     const displayValue = `${stock.code} ${stock.name}`;
+    
+    // Set flag to prevent search after selection
+    isSelectingRef.current = true;
+    
     onChange(displayValue);
+    setSearchResults([]); // Clear search results
     setShowDropdown(false);
 
     if (onStockSelect) {

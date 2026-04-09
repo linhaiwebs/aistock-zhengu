@@ -134,6 +134,8 @@ export default function RefactoredHome() {
 
   const handleStockSelect = (code: string, name: string) => {
     isAutoSelectingRef.current = true;
+    const displayValue = `${code} ${name}`;
+    setInputValue(displayValue);
     setStockCode(code);
     fetchStockData(code);
   };
