@@ -27,6 +27,21 @@ setInterval(async () => {
   await cleanExpiredCache();
 }, 60 * 60 * 1000);
 
+// Middleware to add cache headers for static assets
+function staticAssetCacheMiddleware(req, res, next) {
+  // Cache JSON files for 1 hour in production, 5 minutes in development
+  if (req.path.endsWith('.json')) {
+    const maxAge = NODE_ENV === 'production' ? 3600 : 300;
+    res.setHeader('Cache-Control', `public, max-age=${maxAge}, stale-while-revalidate=86400`);
+    res.setHeader('CDN-Cache-Control', `public, max-age=${maxAge}`);
+  }
+  // Cache other static assets for 1 year with immutable
+  else if (req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/)) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  }
+  next();
+}
+
 function validateApiConfiguration() {
   const apiKey = process.env.SILICONFLOW_API_KEY || process.env.SILICONFLOW_API_KEYS;
 
@@ -121,6 +136,8 @@ app.get('/health', (req, res) => {
 if (NODE_ENV === 'production') {
   const distPath = join(__dirname, '..', 'dist');
 
+  // Apply cache middleware before static file serving
+  app.use(staticAssetCacheMiddleware);
   app.use(express.static(distPath));
 
   app.get('*', (req, res) => {
@@ -128,6 +145,9 @@ if (NODE_ENV === 'production') {
   });
 
   console.log(`📦 Serving static files from: ${distPath}`);
+} else {
+  // In development, still apply cache middleware for assets
+  app.use(staticAssetCacheMiddleware);
 }
 
 app.listen(PORT, () => {

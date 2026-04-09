@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { SearchResult } from '../hooks/useStockSearch';
 
 interface ModernStockInputProps {
@@ -14,23 +14,52 @@ export default function ModernStockInput({ value, onChange, onStockSelect, searc
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const ITEMS_PER_PAGE = 5;
 
+  // Debounced search to avoid excessive computations
+  const performSearch = useCallback((query: string) => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Immediate search for short queries, debounced for longer ones
+    const delay = query.length <= 2 ? 0 : 150;
+    
+    searchTimeoutRef.current = setTimeout(() => {
+      setIsSearching(true);
+      
+      // Use requestAnimationFrame to avoid blocking UI
+      requestAnimationFrame(() => {
+        const results = search(query);
+        setSearchResults(results);
+        setShowDropdown(results.length > 0);
+        setCurrentPage(0);
+        setIsSearching(false);
+      });
+    }, delay);
+  }, [search]);
+
   useEffect(() => {
     if (value.trim().length > 0) {
-      const results = search(value);
-      setSearchResults(results);
-      setShowDropdown(results.length > 0);
-      setCurrentPage(0);
+      performSearch(value);
     } else {
       setSearchResults([]);
       setShowDropdown(false);
       setCurrentPage(0);
+      setIsSearching(false);
     }
-  }, [value, search]);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [value, performSearch]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -91,9 +120,22 @@ export default function ModernStockInput({ value, onChange, onStockSelect, searc
           placeholder="例: 7203 / トヨタ / ソニー"
           className="w-full px-4 py-3 text-base text-gray-900 bg-[#F4F4F4] rounded-xl border-0 focus:ring-2 focus:ring-gray-300 focus:outline-none placeholder-gray-400 transition-all duration-200"
           style={{ height: '52px' }}
-          disabled={isLoading}
         />
+        
+        {/* Show loading indicator in input */}
+        {(isLoading || isSearching) && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+          </div>
+        )}
       </div>
+
+      {/* Show helpful message when data is loading */}
+      {isLoading && value.trim().length > 0 && (
+        <div className="text-xs text-gray-400 mt-1 px-1">
+          株式データを読み込み中... 入力は可能です
+        </div>
+      )}
 
       {showDropdown && currentResults.length > 0 && (
         <div
@@ -147,12 +189,6 @@ export default function ModernStockInput({ value, onChange, onStockSelect, searc
               </button>
             </div>
           )}
-        </div>
-      )}
-
-      {isLoading && (
-        <div className="absolute left-0 right-0 top-full mt-2 text-center text-sm text-gray-300">
-          読み込み中...
         </div>
       )}
     </div>

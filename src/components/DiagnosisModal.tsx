@@ -121,33 +121,6 @@ export default function DiagnosisModal({
               <ExternalLink className="w-6 h-6 flex-shrink-0" />
               <span>LINE追加で無料分析レポートを入手</span>
             </button>
-
-            <div className="mt-3 p-4 rounded-lg border" style={{ backgroundColor: '#FFF7ED', borderColor: '#FB923C' }}>
-              <div className="flex items-start gap-2 mb-2">
-                <ExternalLink className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#EA580C' }} />
-                <p className="text-sm font-bold" style={{ color: '#9A3412' }}>
-                  【重要】AI分析による優良ブルーチップ銘柄を毎日お届け！
-                </p>
-              </div>
-              <ul className="text-xs text-gray-800 leading-relaxed space-y-1.5 ml-1">
-                <li className="flex items-start gap-2">
-                  <span className="text-orange-600 font-bold mt-0.5">•</span>
-                  <span>このボタンをクリックすると、<strong>LINE公式アプリまたはLINE公式サイト（第三者サービス）に移動</strong>します。</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-orange-600 font-bold mt-0.5">•</span>
-                  <span>LINEは当サービスとは<strong>独立した別のサービス</strong>です。</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 font-bold mt-0.5">✓</span>
-                  <span><strong className="text-green-700">完全無料</strong>：LINEへの移動後も追加料金は一切かかりません。</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 font-bold mt-0.5">✓</span>
-                  <span>LINE友だち追加で毎日最新のAI分析レポートが受け取れます。</span>
-                </li>
-              </ul>
-            </div>
           </div>
         </div>
         </div>

@@ -19,6 +19,12 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 600,
     minify: 'esbuild',
+    // Enable compression reporting
+    reportCompressedSize: true,
+    // Optimize CSS
+    cssCodeSplit: true,
+    // Generate source maps for production debugging
+    sourcemap: false,
   },
   server: {
     port: 5173,
@@ -43,5 +49,10 @@ export default defineConfig({
         },
       },
     },
+  },
+  // Configure worker options
+  worker: {
+    format: 'es',
+    plugins: () => [],
   },
 });
