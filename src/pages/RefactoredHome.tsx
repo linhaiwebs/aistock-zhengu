@@ -31,7 +31,7 @@ const diagnosisRecords = [
 
 export default function RefactoredHome() {
   const urlParams = useUrlParams();
-  const { search, isLoading: isSearchLoading } = useStockSearch();
+  const { search, searchDebounced, isLoading: isSearchLoading } = useStockSearch();
   const [stockCode, setStockCode] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [stockData, setStockData] = useState<StockData | null>(null);
@@ -52,28 +52,15 @@ export default function RefactoredHome() {
     if (urlParams.code && !isSearchLoading) {
       isAutoSelectingRef.current = true;
 
-      const searchResults = search(urlParams.code);
-
-      if (searchResults.length > 0) {
-        const firstResult = searchResults[0];
-        const displayValue = `${firstResult.code} ${firstResult.name}`;
-
-        setStockCode(firstResult.code);
-        setInputValue(displayValue);
-        fetchStockData(firstResult.code);
-
-        setAutoFillMessage('株式情報を自動入力しました');
-        setTimeout(() => setAutoFillMessage(''), 2000);
-      } else {
-        setStockCode(urlParams.code);
-        setInputValue(urlParams.code);
-        fetchStockData(urlParams.code);
-      }
+      // For URL params, we need to fetch stock data directly
+      setStockCode(urlParams.code);
+      setInputValue(urlParams.code);
+      fetchStockData(urlParams.code);
     } else if (!urlParams.code) {
       setStockCode('');
       setInputValue('');
     }
-  }, [urlParams.code, search, isSearchLoading]);
+  }, [urlParams.code, isSearchLoading]);
 
   useEffect(() => {
     const loadFallbackConfig = async () => {
@@ -532,6 +519,7 @@ export default function RefactoredHome() {
                   onChange={setInputValue}
                   onStockSelect={handleStockSelect}
                   search={search}
+                  searchDebounced={searchDebounced}
                   isLoading={isSearchLoading}
                 />
 

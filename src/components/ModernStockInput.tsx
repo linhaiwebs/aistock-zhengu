@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { SearchResult } from '../hooks/useStockSearch';
 
@@ -7,59 +7,50 @@ interface ModernStockInputProps {
   onChange: (value: string) => void;
   onStockSelect?: (code: string, name: string) => void;
   search: (query: string) => SearchResult[];
+  searchDebounced?: (query: string, callback: (results: SearchResult[]) => void) => void;
   isLoading?: boolean;
 }
 
-export default function ModernStockInput({ value, onChange, onStockSelect, search, isLoading = false }: ModernStockInputProps) {
+export default function ModernStockInput({ value, onChange, onStockSelect, search, searchDebounced, isLoading = false }: ModernStockInputProps) {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const ITEMS_PER_PAGE = 5;
 
-  // Debounced search to avoid excessive computations
-  const performSearch = useCallback((query: string) => {
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-
-    // Immediate search for short queries, debounced for longer ones
-    const delay = query.length <= 2 ? 0 : 150;
-    
-    searchTimeoutRef.current = setTimeout(() => {
+  // Use async search if available, otherwise fall back to sync
+  const performSearch = useRef((query: string) => {
+    if (searchDebounced) {
+      // Use async debounced search
       setIsSearching(true);
-      
-      // Use requestAnimationFrame to avoid blocking UI
-      requestAnimationFrame(() => {
-        const results = search(query);
+      searchDebounced(query, (results) => {
         setSearchResults(results);
         setShowDropdown(results.length > 0);
         setCurrentPage(0);
         setIsSearching(false);
       });
-    }, delay);
-  }, [search]);
+    } else {
+      // Fallback to synchronous search (immediate)
+      const results = search(query);
+      setSearchResults(results);
+      setShowDropdown(results.length > 0);
+      setCurrentPage(0);
+    }
+  });
 
   useEffect(() => {
     if (value.trim().length > 0) {
-      performSearch(value);
+      performSearch.current(value);
     } else {
       setSearchResults([]);
       setShowDropdown(false);
       setCurrentPage(0);
       setIsSearching(false);
     }
-
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
-  }, [value, performSearch]);
+  }, [value]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

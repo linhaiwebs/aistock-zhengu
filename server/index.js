@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import compression from 'compression';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import stockRouter from './routes/stock.js';
+import stockSearchRouter from './routes/stockSearch.js';
 import geminiRouter from './routes/gemini.js';
 import adminRouter from './routes/admin.js';
 import trackingRouter from './routes/tracking.js';
@@ -116,9 +118,20 @@ function securityHeadersMiddleware(req, res, next) {
 
 app.use(securityHeadersMiddleware);
 app.use(cors(corsOptions));
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6, // Compression level (0-9), 6 is good balance between speed and compression
+  threshold: 1024 // Only compress responses larger than 1KB
+}));
 app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/stock', stockRouter);
+app.use('/api/stock-search', stockSearchRouter);
 app.use('/api/gemini', geminiRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/tracking', trackingRouter);
